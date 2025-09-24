@@ -3,80 +3,66 @@ package translation;
 import javax.swing.*;
 import java.awt.event.*;
 
-
-// TODO Task D: Update the GUI for the program to align with UI shown in the README example.
-//            Currently, the program only uses the CanadaTranslator and the user has
-//            to manually enter the language code they want to use for the translation.
-//            See the examples package for some code snippets that may be useful when updating
-//            the GUI.
 public class GUI {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            JPanel countryPanel = new JPanel();
-            JTextField countryField = new JTextField(10);
-            countryField.setText("can");
-            countryField.setEditable(false); // we only support the "can" country code for now
-            countryPanel.add(new JLabel("Country:"));
-            countryPanel.add(countryField);
-
-//            JPanel languagePanel = new JPanel();
-//            JTextField languageField = new JTextField(10);
-//            languagePanel.add(new JLabel("Language:"));
-//            languagePanel.add(languageField);
+//            JTextField countryField = new JTextField(10);
+//            countryField.setText("can");
+//            countryField.setEditable(false); // we only support the "can" country code for now
+//            countryPanel.add(new JLabel("Country:"));
+//            countryPanel.add(countryField);
 
             JPanel languagePanel = new JPanel();
-            final JLabel languageLabel = new JLabel("Language:");
-            LanguageCodeConverter languageObject = new LanguageCodeConverter();
-            String[] languages = languageObject.languages();
-            final JComboBox<String> lang = new JComboBox<>(languages);
+            LanguageCodeConverter languageObject = new LanguageCodeConverter(); // create an object which can change code to their name and name to their code
+            String[] languages = languageObject.languages(); // extracts all languages
+
+            CountryCodeConverter countryCodeObject = new CountryCodeConverter();
+            String[] countries = countryCodeObject.countries();
+            JPanel countryPanel = new JPanel();
+            JComboBox<String> countryComboBox = new JComboBox<>();
+            for (String country : countries) {
+                countryComboBox.addItem(country);
+            }
+            countryPanel.add(new JLabel("Country:"));
+            countryPanel.add(countryComboBox);
 
             JPanel buttonPanel = new JPanel();
-            JButton submit = new JButton("Submit");
-            buttonPanel.add(submit);
-
             JLabel resultLabelText = new JLabel("Translation:");
             buttonPanel.add(resultLabelText);
             JLabel resultLabel = new JLabel("\t\t\t\t\t\t\t");
             buttonPanel.add(resultLabel);
 
             JComboBox<String> languageComboBox = new JComboBox<>();
-            for(String countryCode : languages) {
-                languageComboBox.addItem(countryCode);
+            for(String language : languages) { // takes the language from the languages extracted
+                languageComboBox.addItem(language); // add the languages to the language combo box
             };
-
-            /*
-            JSONTranslator jsonTranslator = new JSONTranslator();
-            LanguageCodeConverter languageCodeConverter = new LanguageCodeConverter();
-            JComboBox<String> languageComboBox = new JComboBox<>();
-            for(String countryCode : jsonTranslator.getLanguageCodes()) {
-                String newLanguage = languageCodeConverter.fromLanguageCode(countryCode);
-                languageComboBox.addItem(newLanguage);
-            }
-            */
 
             languagePanel.add(new JLabel("Language:"));
             languagePanel.add(languageComboBox);
 
-            // adding listener for when the user clicks the submit button
-            submit.addActionListener(new ActionListener() {
+            // adding listener for when the user changes the language from the languageComboBox
+            ActionListener updateTranslation = new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    String language = languageComboBox.getSelectedItem().toString();
-                    String country = countryField.getText();
-
-
+                    String language = languageComboBox.getSelectedItem().toString(); // returns the current selected language as a string
+//                    String country = countryField.getText();
+//                    countryField String country = countryComboBox.getSelectedItem().toString();
+                    String country = countryComboBox.getSelectedItem().toString(); // returns the current selected country as a string
                     Translator translator = new JSONTranslator();
+                    CountryCodeConverter countryObject = new CountryCodeConverter();
                     LanguageCodeConverter languageObject = new LanguageCodeConverter();
-                    String result = translator.translate(country, languageObject.fromLanguage(language));
+                    String result = translator.translate(countryObject.fromCountry(country), languageObject.fromLanguage(language));
                     if (result == null) {
                         result = "no translation found!";
                     }
                     resultLabel.setText(result);
-
                 }
+            };
 
-            });
+            // Attach same listener to both
+            languageComboBox.addActionListener(updateTranslation);
+            countryComboBox.addActionListener(updateTranslation);
 
             JPanel mainPanel = new JPanel();
             mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));

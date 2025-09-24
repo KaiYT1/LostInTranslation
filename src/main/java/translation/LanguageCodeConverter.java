@@ -43,8 +43,8 @@ public class LanguageCodeConverter {
             while (iterator.hasNext()) {
                 String line = iterator.next();
                 String[] codes = line.split("\t");
-                languageCodeToLanguage.put(codes[1], codes[0]);
-                languageToLanguageCode.put(codes[0], codes[1]);
+                languageCodeToLanguage.put(codes[1], codes[0]); // map code to language
+                languageToLanguageCode.put(codes[0], codes[1]); // map language to code
             }
 
         } catch (IOException | URISyntaxException ex) {
@@ -58,13 +58,13 @@ public class LanguageCodeConverter {
      * @return the name of the language corresponding to the code
      */
     public String fromLanguageCode(String code) {
-        String language = languageCodeToLanguage.get(code);
+        String language = languageCodeToLanguage.get(code); //
         code = language;
         return code;
     }
 
     public String[] languages() {
-        String[] languages = languageToLanguageCode.keySet().toArray(new String[0]);
+        String[] languages = languageToLanguageCode.keySet().toArray(new String[0]); // takes the keys
         return languages;
     }
 
@@ -74,7 +74,7 @@ public class LanguageCodeConverter {
      * @return the 2-letter code of the language
      */
     public String fromLanguage(String language) {
-        String code = languageToLanguageCode.get(language);
+        String code = languageToLanguageCode.get(language); // since it's language -> code, .get(language) would return the code
         language = code;
         return language;
     }
